@@ -10,7 +10,7 @@ Defense::~Defense()
 
 Defense::Defense(QString path, QPoint q)
 {
-
+    initPos = this->pos();
     isPressed = false;
     isMoved = false;
     lastPoint = QPoint();
@@ -90,7 +90,11 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
     }
     case QEvent::MouseButtonRelease:
     {
+        qDebug() << "按钮被释放";
+        qDebug() << isMoved;
+        this->move(initPos.x(),initPos.y());
         if (isMoved != true) {
+
             emit clicked();
             emit toggled(!isChecked);
             isChecked = !isChecked;

@@ -45,6 +45,8 @@ private:
 	int y_bottom_distance;          //可移动的距离上底部的距离
 	bool isChecked = false;          //按钮的选中状态
 
+	QPoint initPos;
+
 private slots:
 
 
