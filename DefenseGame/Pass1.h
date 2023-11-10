@@ -2,6 +2,12 @@
 
 #include <QMainWindow>
 #include "ui_Pass1.h"
+#include <QPoint>
+#include <QPainter>
+#include <QMouseEvent>
+#include "Defense.h"
+#include "DefenseTower.h"
+#include <QVBoxLayout>
 
 class Pass1 : public QMainWindow
 {
@@ -13,8 +19,12 @@ public:
 
 	void paintEvent(QPaintEvent* event);
 
+
 private:
 	Ui::Pass1Class ui;
+
+signals:
+	void handleTowerDropped();
 };
 
 

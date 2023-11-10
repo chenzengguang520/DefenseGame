@@ -1,5 +1,5 @@
 ﻿#include "Enemy.h"
-#include <QLabel.h>
+
 
 
 Enemy::Enemy(QObject *parent)

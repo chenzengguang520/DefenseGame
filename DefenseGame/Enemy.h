@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include <QObject>
+#include <QLabel.h>
 
 class Enemy  : public QObject
 {

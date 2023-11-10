@@ -43,24 +43,30 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="QTimer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Pass1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Enemy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Defense.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DefenseTower.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="QTimer.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
     <QtMoc Include="Pass1.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="Enemy.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Defense.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="DefenseTower.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

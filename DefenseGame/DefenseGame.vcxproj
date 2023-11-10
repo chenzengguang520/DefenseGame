@@ -89,9 +89,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Defense.cpp" />
+    <ClCompile Include="DefenseTower.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Pass1.cpp" />
-    <ClCompile Include="QTimer.cpp" />
     <QtRcc Include="DefenseGame.qrc" />
     <QtRcc Include="image.qrc" />
     <QtUic Include="DefenseGame.ui" />
@@ -101,13 +102,16 @@
     <QtUic Include="Pass1.ui" />
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="QTimer.h" />
-  </ItemGroup>
-  <ItemGroup>
     <QtMoc Include="Pass1.h" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Enemy.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="Defense.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="DefenseTower.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

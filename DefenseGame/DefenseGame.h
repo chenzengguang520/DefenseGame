@@ -2,6 +2,11 @@
 
 #include <QtWidgets/QWidget>
 #include "ui_DefenseGame.h"
+#include <QPainter.h>
+#include <QDebug>
+#include <QPushButton>
+#include "Pass1.h"
+
 
 class DefenseGame : public QWidget
 {

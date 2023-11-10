@@ -1,8 +1,5 @@
 ﻿#include "DefenseGame.h"
-#include <QPainter.h>
-#include <QDebug>
-#include <QPushButton>
-#include "Pass1.h"
+
 
 DefenseGame::DefenseGame(QWidget *parent)
     : QWidget(parent)
