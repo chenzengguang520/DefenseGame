@@ -8,8 +8,9 @@
 Defense::~Defense()
 {}
 
-Defense::Defense(QString path, QPoint q)
+Defense::Defense(QWidget* _pass1,QString path, QPoint q)
 {
+    this->pass1 = _pass1;
     initPos = this->pos();
     isPressed = false;
     isMoved = false;
@@ -52,6 +53,33 @@ Defense::Defense(QString path, QPoint q)
 
 }
 
+Defense::Defense(QString path, QWidget* parent)
+{
+	this->path = path;
+	QPixmap originalPixmap;
+	bool ret = originalPixmap.load(path);
+	if (!ret)
+		qDebug() << "failed";
+
+	// 定义背景颜色的RGB值，例如绿色
+	int red = 34;
+	int green = 177;
+	int blue = 76;
+
+	// 创建一个副本，将背景颜色转换为透明
+	QPixmap modifiedPixmap = originalPixmap;
+	modifiedPixmap.setMask(originalPixmap.createMaskFromColor(QColor(red, green, blue)));
+
+	this->setFixedSize(modifiedPixmap.size());
+	// 设置按钮样式
+	this->setStyleSheet("QPushButton{border:0px}");
+
+	// 设置按钮图标
+	this->setIcon(QIcon(modifiedPixmap));
+	// 设置图标大小
+	this->setIconSize(modifiedPixmap.size());
+}
+
 void Defense::setMargin(int left, int top, int right, int bottom)
 {
     x_left_distance = left;
@@ -77,6 +105,8 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
     {
         if (isPressed) {
 
+            this->positionId = rand() % 11;
+
 			// 获取鼠标相对于小部件的位置
 			QPoint localPos = mouseEvent->pos();
 
@@ -89,7 +119,7 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
 			int x11 = this->x() + dx1;
 			int y11 = this->y() + dy1;
 
-            qDebug() << "mouseEventx = " << x11 << " " << "mouseEventy = " << y11;
+          //  qDebug() << "mouseEventx = " << x11 << " " << "mouseEventy = " << y11;
             int dx = mouseEvent->pos().x() - lastPoint.x();
             int dy = mouseEvent->pos().y() - lastPoint.y();
             int x1 = this->x() + dx;
@@ -99,13 +129,18 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
             if (x1 > x_left_distance && x1< right_distance && y1>y_top_distance && y1 < bottom_distance)
                 this->move(this->x() + dx, this->y() + dy);
             isMoved = true;
+
+            if (check(event))
+            {
+                paintTower(50,50,1);
+            }
         }
         break;
     }
     case QEvent::MouseButtonRelease:
     {
-        qDebug() << "按钮被释放";
-        qDebug() << isMoved;
+      //  qDebug() << "按钮被释放";
+     //   qDebug() << isMoved;
 
 
         if (isMoved != true) {
@@ -118,19 +153,19 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
             isMoved = false;
         }
         isPressed = false;
-        qDebug() << "check(event> = " << check(event);
-        if (check(event))
-        {
-			int dx = mouseEvent->pos().x() - lastPoint.x();
-			int dy = mouseEvent->pos().y() - lastPoint.y();
-			int x1 = this->x() + dx;
-			int y1 = this->y() + dy;
-			int right_distance = this->parentWidget()->width() - 2 * x_right_distancce - this->width();
-			int bottom_distance = this->parentWidget()->height() - 2 * y_bottom_distance - this->height();
-			if (x1 > x_left_distance && x1< right_distance && y1>y_top_distance && y1 < bottom_distance)
-				this->move(this->x() + dx, this->y() + dy);
-        }
-        else 
+     //   qDebug() << "check(event> = " << check(event);
+//         if (check(event))
+//         {
+// 			int dx = mouseEvent->pos().x() - lastPoint.x();
+// 			int dy = mouseEvent->pos().y() - lastPoint.y();
+// 			int x1 = this->x() + dx;
+// 			int y1 = this->y() + dy;
+// 			int right_distance = this->parentWidget()->width() - 2 * x_right_distancce - this->width();
+// 			int bottom_distance = this->parentWidget()->height() - 2 * y_bottom_distance - this->height();
+// 			if (x1 > x_left_distance && x1< right_distance && y1>y_top_distance && y1 < bottom_distance)
+// 				this->move(this->x() + dx, this->y() + dy);
+//         }
+//         else 
             this->move(initPos.x(),initPos.y());
         break;
     }
@@ -150,7 +185,8 @@ void Defense::setPosition(QPair<double, double> p)
 
 bool Defense::check(QEvent* event)
 {
-    qDebug() << "checking";
+    sendDefenseID(1);
+   // qDebug() << "checking";
     QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
 	// 获取鼠标相对于小部件的位置
 	QPoint localPos = mouseEvent->pos();
@@ -161,17 +197,32 @@ bool Defense::check(QEvent* event)
 	double dy1 = localPos.y() - lastPoint.y();
 	double x = this->x() + dx1;
 	double y = this->y() + dy1;
-    qDebug() << "x = " << x << " y = " << y;
-    qDebug() << (*positon.begin()).first << " " << (*positon.begin()).second;
+  //  qDebug() << "x = " << x << " y = " << y;
+  //  qDebug() << (*positon.begin()).first << " " << (*positon.begin()).second;
     QPair<double, double>q(x, y);
     for (const auto& cur : positon)
     {
         double curx = cur.first;
         double cury = cur.second;
-        qDebug() << "curx = " << curx << " cury = " << cury;
+       // qDebug() << "curx = " << curx << " cury = " << cury;
         if (x > curx - 10 && x < curx + 10 && y > cury - 10 && y < cury + 10)
+        {
             return true;
+        }
     }
     return false;
 }
 
+void Defense::paintTower(int x, int y, int id)
+{
+	QString path = "./images/Fortress/small1.BMP";
+	Defense* defense = new Defense(path,pass1);
+    defense->setParent(pass1);
+    defense->move(50, 50);
+	defense->show();
+}
+
+void Defense::sendDefenseID(int Id)
+{
+    emit Id;
+}
