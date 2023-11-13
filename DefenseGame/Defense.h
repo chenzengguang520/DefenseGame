@@ -8,6 +8,7 @@
 #include <QTimer>
 #include <QMimeData>
 #include <QDrag>
+#include <QSet>
 
 class Defense : public QPushButton
 {
@@ -17,6 +18,8 @@ public:
     ~Defense();
     Defense(QString path,QPoint q);
     void setMargin(int left, int top, int right, int bottom);
+	void setPosition(QPair<double,double> p);
+	bool check(QEvent* event);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
@@ -29,7 +32,6 @@ public:
     QTimer* timer = nullptr;
 
 private:
-private:
 	QString text;                   //显示文字
 	bool isPressed;                 //鼠标是否按下
 	QPoint lastPoint;               //鼠标按下最后坐标
@@ -41,9 +43,10 @@ private:
 	bool isMoved;                   //是否正在移动中
 	int x_left_distance;            //可移动的距离左侧的距离
 	int y_top_distance;             //可移动的距离上面的距离
-	int x_right_distancce;          //可移动的距离右侧的距离
+	int x_right_distancce;          //可移动的距离右侧的距离+
 	int y_bottom_distance;          //可移动的距离上底部的距离
 	bool isChecked = false;          //按钮的选中状态
+	QSet<QPair<double, double>>positon; //可以放置的位置坐标
 
 	QPoint initPos;
 

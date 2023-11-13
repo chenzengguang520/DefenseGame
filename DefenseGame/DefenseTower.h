@@ -15,17 +15,15 @@ public:
     explicit DefenseTower(QWidget* parent = nullptr);
 
 protected:
-    void mousePressEvent(QMouseEvent* event) override;
-    void mouseMoveEvent(QMouseEvent* event) override;
-    void mouseReleaseEvent(QMouseEvent* event) override;
-    void dragEnterEvent(QDragEnterEvent* event) override;
-    void dropEvent(QDropEvent* event) override;
-    void paintEvent(QPaintEvent* event) override;
-
+    void paintEvent(QPaintEvent* event);
 private:
     QPoint dragStartPosition;
     QPoint moveDelta;
     QPixmap towerPixmap;
+    QPixmap scaledPixmap;
+
+private:
+    void removeGreenColor();
 
 
 };

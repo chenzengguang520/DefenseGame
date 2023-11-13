@@ -76,6 +76,20 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
     case QEvent::MouseMove:
     {
         if (isPressed) {
+
+			// 获取鼠标相对于小部件的位置
+			QPoint localPos = mouseEvent->pos();
+
+			// 将相对于小部件的坐标映射到父级窗口的坐标系
+			QPoint parentPos = mapToParent(localPos);
+
+			// 在MouseMove事件中，您可能需要使用之前记录的lastPoint作为起点进行坐标变化的计算
+			int dx1 = localPos.x() - lastPoint.x();
+			int dy1 = localPos.y() - lastPoint.y();
+			int x11 = this->x() + dx1;
+			int y11 = this->y() + dy1;
+
+            qDebug() << "mouseEventx = " << x11 << " " << "mouseEventy = " << y11;
             int dx = mouseEvent->pos().x() - lastPoint.x();
             int dy = mouseEvent->pos().y() - lastPoint.y();
             int x1 = this->x() + dx;
@@ -92,7 +106,8 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
     {
         qDebug() << "按钮被释放";
         qDebug() << isMoved;
-        this->move(initPos.x(),initPos.y());
+
+
         if (isMoved != true) {
 
             emit clicked();
@@ -103,6 +118,20 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
             isMoved = false;
         }
         isPressed = false;
+        qDebug() << "check(event> = " << check(event);
+        if (check(event))
+        {
+			int dx = mouseEvent->pos().x() - lastPoint.x();
+			int dy = mouseEvent->pos().y() - lastPoint.y();
+			int x1 = this->x() + dx;
+			int y1 = this->y() + dy;
+			int right_distance = this->parentWidget()->width() - 2 * x_right_distancce - this->width();
+			int bottom_distance = this->parentWidget()->height() - 2 * y_bottom_distance - this->height();
+			if (x1 > x_left_distance && x1< right_distance && y1>y_top_distance && y1 < bottom_distance)
+				this->move(this->x() + dx, this->y() + dy);
+        }
+        else 
+            this->move(initPos.x(),initPos.y());
         break;
     }
     case QEvent::MouseButtonDblClick:
@@ -113,3 +142,36 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
     }
     return QWidget::eventFilter(watched, event);
 }
+
+void Defense::setPosition(QPair<double, double> p)
+{
+    this->positon.insert(p);
+}
+
+bool Defense::check(QEvent* event)
+{
+    qDebug() << "checking";
+    QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+	// 获取鼠标相对于小部件的位置
+	QPoint localPos = mouseEvent->pos();
+
+	// 将相对于小部件的坐标映射到父级窗口的坐标系
+	QPoint parentPos = mapToParent(localPos);
+	double dx1 = localPos.x() - lastPoint.x();
+	double dy1 = localPos.y() - lastPoint.y();
+	double x = this->x() + dx1;
+	double y = this->y() + dy1;
+    qDebug() << "x = " << x << " y = " << y;
+    qDebug() << (*positon.begin()).first << " " << (*positon.begin()).second;
+    QPair<double, double>q(x, y);
+    for (const auto& cur : positon)
+    {
+        double curx = cur.first;
+        double cury = cur.second;
+        qDebug() << "curx = " << curx << " cury = " << cury;
+        if (x > curx - 10 && x < curx + 10 && y > cury - 10 && y < cury + 10)
+            return true;
+    }
+    return false;
+}
+

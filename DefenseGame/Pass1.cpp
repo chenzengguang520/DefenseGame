@@ -5,6 +5,12 @@ Pass1::Pass1(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	//可以放置防御塔的位置
+	DefenseTower* ac = new DefenseTower(this);
+	ac->move(QPoint(this->width() / 2, this->height() / 2));
+	QPair<double, double>position (this->width() * 1.0 / 2, this->height() * 1.0 / 2);
+	qDebug() << " xx = " << this->width() * 1.0 / 2 << " yy = " << this->height() * 1.0 / 2;
+	ac->show();
 
 
 	this->resize(1024, 568);
@@ -13,17 +19,8 @@ Pass1::Pass1(QWidget *parent)
 
 	defense1->setParent(this);
 	defense1->show();
+	defense1->setPosition(position);
 	
-// 	QWidget* centralWidget = new QWidget(this);
-// 	setCentralWidget(centralWidget);
-// 
-// 	QVBoxLayout* layout = new QVBoxLayout(centralWidget);
-// 
-// 	DefenseTower* defenseTower = new DefenseTower(this);
-// 	layout->addWidget(defenseTower);
-// 
-// 	QWidget* w = new QWidget(this);
-// 	w->show();
 
 }
 
