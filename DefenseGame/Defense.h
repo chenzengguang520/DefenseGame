@@ -9,19 +9,22 @@
 #include <QMimeData>
 #include <QDrag>
 #include <QSet>
+#include <QVector>
 
 class Defense : public QPushButton
 {
     Q_OBJECT
 
 public:
+	Defense();
     ~Defense();
-    Defense(QWidget* pass1,QString path,QPoint q);
+    Defense(QWidget* pass1,QString path,QPoint q,int num);
 	Defense(QString path,QWidget* parent = nullptr);
     void setMargin(int left, int top, int right, int bottom);
 	void setPosition(QPair<double,double> p);
-	bool check(QEvent* event);
-	void paintTower(int x, int y, int id);
+	int check(QEvent* event);
+	//void paintTower(int x, int y, int id);
+	void makeDefenses(int num);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
@@ -33,6 +36,9 @@ public:
     QPoint moveDelta;
     QTimer* timer = nullptr;
 	int positionId = 0;
+	QVector<Defense*> towers;
+	QPoint initPos;
+	QVector<QPair<int, int>>positon; //可以放置的位置坐标
 
 private:
 	QWidget* pass1 = nullptr;
@@ -50,8 +56,11 @@ private:
 	int x_right_distancce;          //可移动的距离右侧的距离+
 	int y_bottom_distance;          //可移动的距离上底部的距离
 	bool isChecked = false;          //按钮的选中状态
-	QSet<QPair<double, double>>positon; //可以放置的位置坐标
-	QPoint initPos;
+	bool isShow = false; //判断是否显形过
+	bool isCheckAc = false;
+	Defense* des = nullptr;
+	static QVector<bool> canMove;
+	
 
 private slots:
 

@@ -21,6 +21,10 @@ public:
 	void paintEvent(QPaintEvent* event);
 	void paintTower(int id,int x,int y);
 
+public:
+	QVector<QPoint>acPos;
+	QVector<bool> canMove;
+
 
 private:
 	Ui::Pass1Class ui;
