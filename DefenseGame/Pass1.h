@@ -9,6 +9,8 @@
 #include "DefenseTower.h"
 #include <QVBoxLayout>
 #include <QMouseEvent>
+#include "Enemy.h"
+#include <QTimer>
 
 class Pass1 : public QMainWindow
 {
@@ -24,10 +26,12 @@ public:
 public:
 	QVector<QPoint>acPos;
 	QVector<bool> canMove;
+	QVector<QPoint>enemyPos;
 
 
 private:
 	Ui::Pass1Class ui;
+	QPair<double,double> getGap(double x, double y,double v);
 
 protected:
 	//void mousePressEvent(QMouseEvent* event);
@@ -43,6 +47,16 @@ private:
 	bool isMoved = false;
 	bool isPressed = false;
 	QSet<QPair<int, int>>posSet;
+	int enemyMinNum = 1;
+	int enemyMaxNum = 13;
+	double initx = 0;
+	double inity = 0;
+	double destinationX = 0;
+	double destinationY = 0;
+	double dx = 0;
+	double dy = 0;
+	int enemyPosId = 0;
+
 };
 
 

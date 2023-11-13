@@ -1,19 +1,17 @@
 ﻿#pragma once
 
 #include <QObject>
-#include <QLabel.h>
+#include <QPushButton>
 
-class Enemy  : public QObject
+class Enemy  : public QPushButton
 {
 	Q_OBJECT
 
 public:
-	Enemy(QObject *parent);
 	~Enemy();
-	Enemy();
+	Enemy(QString path);
 	Enemy(int b, int s, int d);
-
-	void move(int x, int y, int endX, int endY);
+	void changShape(QString path);
 
 public:
 	int blood = 0;

@@ -50,11 +50,9 @@ Defense::Defense(QWidget* _pass1,QString path, QPoint q,int num)
 	// 创建一个副本，将背景颜色转换为透明
 	QPixmap modifiedPixmap = originalPixmap;
 	modifiedPixmap.setMask(originalPixmap.createMaskFromColor(QColor(red, green, blue)));
-
 	this->setFixedSize(modifiedPixmap.size());
 	// 设置按钮样式
 	this->setStyleSheet("QPushButton{border:0px}");
-
 	// 设置按钮图标
 	this->setIcon(QIcon(modifiedPixmap));
 	// 设置图标大小
