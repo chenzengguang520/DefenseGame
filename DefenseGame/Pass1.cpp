@@ -73,19 +73,20 @@ Pass1::Pass1(QWidget *parent)
 
 	enemyPos.push_back(QPoint(450.0, 0));
 	enemyPos.push_back(QPoint(450.0, 105.0));
-	enemyPos.push_back(QPoint(400.0, 165.0));
-	enemyPos.push_back(QPoint(240.0, 220.0));
+	enemyPos.push_back(QPoint(420.0, 175.0));
+	enemyPos.push_back(QPoint(260.0, 230.0));
+	enemyPos.push_back(QPoint(240.0, 230.0));
 	enemyPos.push_back(QPoint(240.0, 300.0));
 	enemyPos.push_back(QPoint(280.0, 350.0));
-	enemyPos.push_back(QPoint(300.0, 350.0));
-	enemyPos.push_back(QPoint(400.0, 350.0));
-	enemyPos.push_back(QPoint(500.0, 350.0));
-	enemyPos.push_back(QPoint(600.0, 350.0));
-	enemyPos.push_back(QPoint(720.0, 350.0));
-	enemyPos.push_back(QPoint(800.0, 290.0));
-	enemyPos.push_back(QPoint(this->width(), 290));
+	enemyPos.push_back(QPoint(300.0, 370.0));
+	enemyPos.push_back(QPoint(400.0, 370.0));
+	enemyPos.push_back(QPoint(500.0, 370.0));
+	enemyPos.push_back(QPoint(600.0, 370.0));
+	enemyPos.push_back(QPoint(720.0, 370.0));
+	enemyPos.push_back(QPoint(800.0, 300.0));
+	enemyPos.push_back(QPoint(this->width(), 300));
 
-	int enemyNum = 5;
+	int enemyNum = 10;
 	for (int i = 0; i < enemyNum; i++)
 	{
 		int _id = rand() % 3 + 1;
@@ -107,7 +108,7 @@ Pass1::Pass1(QWidget *parent)
 		}
 
 		enemy->initx = enemyPos[0].x();
-		enemy->inity = enemyPos[0].y() - 20 * i;
+		enemy->inity = enemyPos[0].y() - 40 * i;
 		enemy->destinationX = enemyPos[1].x();
 		enemy->destinationY = enemyPos[1].y();
 		enemy->dy = 1;
@@ -205,7 +206,7 @@ void Pass1::enemyMove(Enemy* enemy)
 
 	QTimer* timer = new QTimer;
 
-	timer->start(10);
+	timer->start(50);
 
 	connect(timer, &QTimer::timeout, [=]() {
 
@@ -229,7 +230,7 @@ void Pass1::enemyMove(Enemy* enemy)
 			enemy->initx = enemy->destinationX;
 			enemy->inity = enemy->destinationY;
 
-			if (enemy->initx == this->width() - 5)
+			if (enemy->initx == this->width())
 				timer->stop();
 
 			if (enemy->inity == 350.0)
