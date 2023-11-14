@@ -189,6 +189,9 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
         {
             canMove[ret + 1] = 1;
             this->towers[ret]->show();
+            qDebug()<<"**********************";
+            qDebug() << this;
+            this->isShowing = true;
         }
         this->move(initPos.x(),initPos.y());
         break;
@@ -244,8 +247,15 @@ void Defense::makeDefenses(int num)
     for (int i = 0; i < num; i++)
     {
         Defense* defense = new Defense(path, pass1);
+        defense->isShowing = false;
+        defense->attackRadius = 200;
         towers.push_back(defense);
     }
+}
+
+bool Defense::isShowed()
+{
+    return this->isShowing;
 }
 
 void Defense::sendDefenseID(int Id)

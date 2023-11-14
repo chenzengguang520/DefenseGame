@@ -25,6 +25,8 @@ public:
 	int check(QEvent* event);
 	//void paintTower(int x, int y, int id);
 	void makeDefenses(int num);
+	bool isShowed();
+
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
@@ -39,6 +41,10 @@ public:
 	QVector<Defense*> towers;
 	QPoint initPos;
 	QVector<QPair<int, int>>positon; //可以放置的位置坐标
+	bool isShowing;// 现在是否是显形状态
+
+	double attackRadius;
+
 
 private:
 	QWidget* pass1 = nullptr;

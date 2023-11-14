@@ -24,10 +24,13 @@ public:
 	void paintEvent(QPaintEvent* event);
 	void paintTower(int id,int x,int y);
 	void mousePressEvent(QMouseEvent* event);
+	void updateDistance();
 public:
 	QVector<QPoint>acPos;
 	QVector<bool> canMove;
 	QVector<QPoint>enemyPos;
+	QVector<Defense*>defenses;
+	QVector<QVector<double>>distances;//tower i to enemy distance
 
 
 
@@ -41,9 +44,11 @@ protected:
 signals:
 	void handleTowerDropped();
 
-public slots:
+public :
 	void receiveId(int data);
-	void enemyMove(Enemy* enemy);
+	void enemyMove(Enemy* enemy,int index);
+
+	double getDistance(double x1, double y1, double x2, double y2);
 
 private:
 	int defenseId = -1;
@@ -57,6 +62,12 @@ private:
 	QVector<Enemy*> enemys;
 	int moveId = 0;
 	bool makeEnemy = false;
+
+
+	int num = 2;//有多少个炮塔
+	int enemyNum = 10;//有多少个怪
+
+	const int MAX_NUM = 0X7fffffff;
 
 };
 

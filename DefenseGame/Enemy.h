@@ -14,7 +14,7 @@ public:
 	void changShape(QString path);
 
 public:
-	int blood = 0;
+	int blood = 0;		
 	int speed = 0;
 	int id = 0;
 	QString enemyPath = "";
@@ -30,5 +30,6 @@ public:
 	int enemyMinNum = 1;
 	int enemyMaxNum = 13;
 	bool canMove = false;
+
 };
 

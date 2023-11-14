@@ -6,6 +6,22 @@ Pass1::Pass1(QWidget *parent)
 {
 	ui.setupUi(this);
 
+	enemyNum = 10;
+	num = 2;
+	this->distances.resize(num * 2);
+	for (int i = 0; i < num * 2; i++)
+	{
+		this->distances[i].resize(enemyNum + 2);
+	}
+
+
+	for (int i = 0; i < num * 2; i++)
+	{
+		for (int j = 0; j < enemyNum; j++)
+		{
+			this->distances[i][j] = MAX_NUM;
+		}
+	}
 
 	this->installEventFilter(this);
 
@@ -29,17 +45,19 @@ Pass1::Pass1(QWidget *parent)
 	this->resize(1024, 568);
 	QPoint q(0, 0);
 
-	Defense* defense11 = new Defense("./images/Fortress/small1.BMP", this);
-	defense11->setParent(this);
-	defense11->show();
 
-	Defense* defense12 = new Defense("./images/Fortress/small2.BMP", this);
-	defense12->setParent(this);
-	defense12->move(defense11->size().width() + 5, 0);
-	defense12->show();
+	//啥作用暂时忘了，不敢删
+// 	Defense* defense11 = new Defense("./images/Fortress/small1.BMP", this);
+// 	defense11->setParent(this);
+// 	defense11->show();
+// 
+// 	Defense* defense12 = new Defense("./images/Fortress/small2.BMP", this);
+// 	defense12->setParent(this);
+// 	defense12->move(defense11->size().width() + 5, 0);
+// 	defense12->show();
 
 
-	int num = 2;
+	//左上角的两个防御塔
 	Defense* defense1 = new Defense(this,"./images/Fortress/small1.BMP",q,num);
 
 	defense1->setParent(this);
@@ -50,6 +68,9 @@ Pass1::Pass1(QWidget *parent)
 	defense2->move(defense1->size().width() + 5,0);
 	defense2->initPos = defense2->pos();
 	defense2->show();
+
+	
+
 	int count = 0;
 	for (auto& cur : acPos)
 	{
@@ -68,6 +89,18 @@ Pass1::Pass1(QWidget *parent)
 
 	}
 
+	//存储防御塔
+	for (auto& defense : defense1->towers)
+	{
+		//qDebug() << "&defense = " << &defense;
+		this->defenses.push_back(defense);
+	}
+
+	for (auto& defense : defense2->towers)
+	{
+		this->defenses.push_back(defense);
+	}
+
 	//gogogo
 	//Enemy* enemy = new Enemy("./images/monster1/down_1.BMP");
 
@@ -80,13 +113,12 @@ Pass1::Pass1(QWidget *parent)
 	enemyPos.push_back(QPoint(280.0, 350.0));
 	enemyPos.push_back(QPoint(300.0, 370.0));
 	enemyPos.push_back(QPoint(400.0, 370.0));
-	enemyPos.push_back(QPoint(500.0, 370.0));
+	enemyPos.push_back(QPoint(500.0, 370.0));	
 	enemyPos.push_back(QPoint(600.0, 370.0));
 	enemyPos.push_back(QPoint(720.0, 370.0));
 	enemyPos.push_back(QPoint(800.0, 300.0));
 	enemyPos.push_back(QPoint(this->width(), 300));
 
-	int enemyNum = 10;
 	for (int i = 0; i < enemyNum; i++)
 	{
 		int _id = rand() % 3 + 1;
@@ -120,18 +152,10 @@ Pass1::Pass1(QWidget *parent)
 
 	for (int i = 0; i < enemyNum; i++)
 	{
-		enemyMove(enemys[i]);
+		enemyMove(enemys[i],i);
 	}
 
-// 	QTimer* timer = new QTimer;
-// 
-// 	timer->start(10);
-// 
-// 	enemys[moveId]->canMove = true;
-// 	
-// 	connect(timer, &QTimer::timeout, [=]() {
-// 
-// 	});
+
 
 
 }
@@ -164,6 +188,32 @@ void Pass1::paintTower(int id, int x, int y)
 void Pass1::mousePressEvent(QMouseEvent* event)
 {
 	qDebug() << "event->pos() = " << event->pos();
+}
+
+void Pass1::updateDistance()
+{
+//	qDebug() << "update function is runing";
+	for (int i = 0; i < num * 2; i++)
+	{
+		for (int j = 0; j < enemyNum; j++)
+		{
+			//qDebug() << "i = " << i << " j = " << j << " isShow = " << defenses[i]->isShowing << " &this = " << &distances[i];
+			distances[i][j] = MAX_NUM;
+			if (!defenses[i]->isVisible())
+			{
+				
+				break;
+			}
+			double x1 = this->defenses[i]->pos().x();
+			double y1 = this->defenses[i]->pos().y();
+			double x2 = this->enemys[j]->initx;
+			double y2 = this->enemys[j]->inity;
+			double dis = getDistance(x1, y1, x2, y2);
+			//qDebug() << "dis = " << dis;
+			this->distances[i][j] = dis;
+		}
+	}
+
 }
 
 QPair<double,double> Pass1::getGap(double x, double y,double V)
@@ -201,7 +251,7 @@ QPair<double,double> Pass1::getGap(double x, double y,double V)
 	return QPair<double, double>(vx, vy);
 }
 
-void Pass1::enemyMove(Enemy* enemy)
+void Pass1::enemyMove(Enemy* enemy,int index)
 {
 
 	QTimer* timer = new QTimer;
@@ -213,7 +263,7 @@ void Pass1::enemyMove(Enemy* enemy)
 
 		enemy->setParent(this);
 		enemy->show();
-		enemy->move(450.0, 0);
+		enemy->move(450.0 + enemy->width() / 2, 0 + enemy->height() / 2);
 	
 		if (!enemy->isChange)
 			enemy->enemyPath = QString(QString("./images/monster%1/down_%2.BMP").arg(enemy->id).arg(enemy->enemyMinNum++));
@@ -223,6 +273,18 @@ void Pass1::enemyMove(Enemy* enemy)
 		enemy->initx += enemy->dx;
 		enemy->inity += enemy->dy;
 		enemy->move(enemy->initx, enemy->inity);
+
+		//判断是否可攻击
+		updateDistance();
+		for (int i = 0; i < num * 2; i++)
+		{
+		//	qDebug() << "attackRadius" << defenses[i]->attackRadius;
+			//qDebug()<<"dis = "<< distances[i][index] << "attackRadius" << defenses[i]->attackRadius;
+			if (distances[i][index] <= defenses[i]->attackRadius)
+			{
+				qDebug() << "i = " <<i<< " index = " << index << " dis = " << distances[i][index];
+			}
+		}
 
 
 		if (enemy->inity - enemy->destinationY <= 2 && enemy->inity - enemy->destinationY >= -2 && enemy->initx - enemy->destinationX <= 2 && enemy->initx - enemy->destinationX >= -2)
@@ -267,4 +329,10 @@ void Pass1::enemyMove(Enemy* enemy)
 		
 	});
 
+}
+
+double Pass1::getDistance(double x1, double y1, double x2, double y2)
+{
+	double ans = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
+	return ans;
 }
