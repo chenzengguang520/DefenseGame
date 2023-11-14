@@ -11,6 +11,7 @@
 #include <QMouseEvent>
 #include "Enemy.h"
 #include <QTimer>
+#include <cmath>
 
 class Pass1 : public QMainWindow
 {
@@ -22,11 +23,12 @@ public:
 
 	void paintEvent(QPaintEvent* event);
 	void paintTower(int id,int x,int y);
-
+	void mousePressEvent(QMouseEvent* event);
 public:
 	QVector<QPoint>acPos;
 	QVector<bool> canMove;
 	QVector<QPoint>enemyPos;
+
 
 
 private:
@@ -41,21 +43,20 @@ signals:
 
 public slots:
 	void receiveId(int data);
+	void enemyMove(Enemy* enemy);
 
 private:
 	int defenseId = -1;
 	bool isMoved = false;
 	bool isPressed = false;
 	QSet<QPair<int, int>>posSet;
-	int enemyMinNum = 1;
-	int enemyMaxNum = 13;
-	double initx = 0;
-	double inity = 0;
-	double destinationX = 0;
-	double destinationY = 0;
-	double dx = 0;
-	double dy = 0;
-	int enemyPosId = 0;
+	
+	
+	int time = 0;
+	int enemyId = 0;
+	QVector<Enemy*> enemys;
+	int moveId = 0;
+	bool makeEnemy = false;
 
 };
 

@@ -12,7 +12,7 @@ Pass1::Pass1(QWidget *parent)
 	qDebug() << "this->x = " << this->width() << " this->y = " << this->height();
 
 
-	QPoint p1(this->width() / 2, this->height() / 2);
+	QPoint p1(this->width() / 2 - 20, this->height() / 2 - 20);
 	QPoint p2(this->width() * 0.8, this->height() * 0.8);
 
 	acPos.push_back(p1);
@@ -69,62 +69,68 @@ Pass1::Pass1(QWidget *parent)
 	}
 
 	//gogogo
-	Enemy* enemy = new Enemy("./images/monster1/down_1.BMP");
-	enemy->setParent(this);
-	enemy->move(this->width() * 0.45, 0);
-	enemyPos.push_back(QPoint(450, 0));
-	enemyPos.push_back(QPoint(450, 105));
-	enemyPos.push_back(QPoint(400, 165));
-	enemyPos.push_back(QPoint(250, 200));
-	enemyPos.push_back(QPoint(245, 250));
-	enemyPos.push_back(QPoint(240, 300));
-	enemyPos.push_back(QPoint(280, 350));
-	enemyPos.push_back(QPoint(300, 350));
-	enemyPos.push_back(QPoint(400, 350));
-	enemyPos.push_back(QPoint(500, 350));
-	enemyPos.push_back(QPoint(600, 350));
+	//Enemy* enemy = new Enemy("./images/monster1/down_1.BMP");
 
-	QTimer* timer = new QTimer;
+	enemyPos.push_back(QPoint(450.0, 0));
+	enemyPos.push_back(QPoint(450.0, 105.0));
+	enemyPos.push_back(QPoint(400.0, 165.0));
+	enemyPos.push_back(QPoint(240.0, 220.0));
+	enemyPos.push_back(QPoint(240.0, 300.0));
+	enemyPos.push_back(QPoint(280.0, 350.0));
+	enemyPos.push_back(QPoint(300.0, 350.0));
+	enemyPos.push_back(QPoint(400.0, 350.0));
+	enemyPos.push_back(QPoint(500.0, 350.0));
+	enemyPos.push_back(QPoint(600.0, 350.0));
+	enemyPos.push_back(QPoint(720.0, 350.0));
+	enemyPos.push_back(QPoint(800.0, 290.0));
+	enemyPos.push_back(QPoint(this->width(), 290));
 
-	timer->start(50);
-	initx = enemyPos[0].x();
-	inity = enemyPos[0].y();
-	destinationX = enemyPos[1].x();
-	destinationY = enemyPos[1].y();
-	dy = 1;
-	enemyPosId++;
-	connect(timer, &QTimer::timeout, [=]() {
+	int enemyNum = 5;
+	for (int i = 0; i < enemyNum; i++)
+	{
+		int _id = rand() % 3 + 1;
+		QString eneP = QString("./images/monster%1/down_1.BMP").arg(_id);
+		Enemy* enemy = new Enemy(eneP);
 
-		QString enemyPath = QString(QString("./images/monster1/down_%1.BMP").arg(enemyMinNum++));
-		enemy->changShape(enemyPath);
-		initx += dx;
-		inity += dy;
-		qDebug() << "inity = " << inity<<" initx = "<<initx;
-		enemy->move(initx, inity);
-		//qDebug() << "inity = " << inity;
-// 		if (inity == 50)
-// 		{
-// 			qDebug() << "initx = " << initx;
-// 			timer->stop();
-// 		}
-		if (inity - destinationY <= 1 && inity - destinationY >= -1 && initx - destinationX <= 1 && initx - destinationX >= -1)
+		if (_id == 1)
 		{
-/*			dx = -1;*/
-			initx = destinationX;
-			inity = destinationY;
-			destinationX = enemyPos[++enemyPosId].x();
-			destinationY = enemyPos[enemyPosId].y();
-			double X = destinationX - initx;
-			double Y = destinationY - inity;
-			QPair<double, double> v = getGap(destinationX - initx, destinationY - inity,1.0);
-			dx = v.first;
-			dy = v.second;
+			enemy->enemyMaxNum = 13;
 		}
-		if (enemyMinNum + 1 > enemyMaxNum)
+
+		if (_id == 2)
 		{
-			enemyMinNum = 1;
+			enemy->enemyMaxNum = 14;
 		}
-	});
+		if (_id == 3)
+		{
+			enemy->enemyMaxNum = 13;
+		}
+
+		enemy->initx = enemyPos[0].x();
+		enemy->inity = enemyPos[0].y() - 20 * i;
+		enemy->destinationX = enemyPos[1].x();
+		enemy->destinationY = enemyPos[1].y();
+		enemy->dy = 1;
+		enemy->id = _id;
+		enemy->enemyPosId++;
+		enemys.push_back(enemy);
+	}
+	
+
+	for (int i = 0; i < enemyNum; i++)
+	{
+		enemyMove(enemys[i]);
+	}
+
+// 	QTimer* timer = new QTimer;
+// 
+// 	timer->start(10);
+// 
+// 	enemys[moveId]->canMove = true;
+// 	
+// 	connect(timer, &QTimer::timeout, [=]() {
+// 
+// 	});
 
 
 }
@@ -154,14 +160,110 @@ void Pass1::paintTower(int id, int x, int y)
 
 }
 
+void Pass1::mousePressEvent(QMouseEvent* event)
+{
+	qDebug() << "event->pos() = " << event->pos();
+}
+
 QPair<double,double> Pass1::getGap(double x, double y,double V)
 {
-	double tana = y * V * 0.1 / x;
+// 	if (x == 0)
+// 	{
+// 		return QPair<double, double>(0, 1.0);
+// 	}
+	double arctan_value = atan(y * V / x);
+	//double tana = y * V / x;
+	double tana = tan(arctan_value);
 	tana = tana > 0 ? tana : -1 * tana;
-	qDebug() << "tana = " << tana;
-	double vx = 1.0 / sqrt(1 + tana);
-	double vy = 1.0 / sqrt(1 + tana) * tana;
-	vx = x > 0 ? vx : -1 * vx;
-	vy = y > 0 ? vy : -1 * vy;
+// 	double vx = 1.0 / sqrt(1 + tana);
+// 	double vy = 1.0 / sqrt(1 + tana) * tana;
+
+	double vx = 1 * cos(arctan_value);
+	double vy = 1 * sin(arctan_value);
+
+	if (x > 0)
+	{
+		vx = vx > 0 ? vx : -1 * vx;
+	}
+	else
+	{
+		vx = vx < 0 ? vx : -1 * vx;
+	}
+	if (y > 0)
+	{
+		vy = vy > 0 ? vy : -1 * vy;
+	}
+	else
+	{
+		vy = vy < 0 ? vy : -1 * vy;
+	}
 	return QPair<double, double>(vx, vy);
+}
+
+void Pass1::enemyMove(Enemy* enemy)
+{
+
+	QTimer* timer = new QTimer;
+
+	timer->start(10);
+
+	connect(timer, &QTimer::timeout, [=]() {
+
+
+		enemy->setParent(this);
+		enemy->show();
+		enemy->move(450.0, 0);
+	
+		if (!enemy->isChange)
+			enemy->enemyPath = QString(QString("./images/monster%1/down_%2.BMP").arg(enemy->id).arg(enemy->enemyMinNum++));
+		else
+			enemy->enemyPath = QString(QString("./images/monster%1/Right_%2.BMP").arg(enemy->id).arg(enemy->enemyMinNum++));
+		enemy->changShape(enemy->enemyPath);
+		enemy->initx += enemy->dx;
+		enemy->inity += enemy->dy;
+		enemy->move(enemy->initx, enemy->inity);
+
+
+		if (enemy->inity - enemy->destinationY <= 2 && enemy->inity - enemy->destinationY >= -2 && enemy->initx - enemy->destinationX <= 2 && enemy->initx - enemy->destinationX >= -2)
+		{
+			enemy->initx = enemy->destinationX;
+			enemy->inity = enemy->destinationY;
+
+			if (enemy->initx == this->width() - 5)
+				timer->stop();
+
+			if (enemy->inity == 350.0)
+			{
+				enemy->isChange = true;
+
+				if (enemy->id == 1)
+				{
+					enemy->enemyMaxNum = 17;
+				}
+
+				if (enemy->id == 2)
+				{
+					enemy->enemyMaxNum = 14;
+				}
+				if (enemy->id == 3)
+				{
+					enemy->enemyMaxNum = 13;
+				}
+
+			}
+			enemy->destinationX = enemyPos[++enemy->enemyPosId].x();
+			enemy->destinationY = enemyPos[enemy->enemyPosId].y();
+			double X = enemy->destinationX - enemy->initx;
+			double Y = enemy->destinationY - enemy->inity;
+			QPair<double, double> v = getGap(X, Y, 1.0);
+			enemy->dx = v.first;
+			enemy->dy = v.second;
+		}
+		if (enemy->enemyMinNum + 1 > enemy->enemyMaxNum)
+		{
+			enemy->enemyMinNum = 1;
+		}
+		
+	});
+
 }
