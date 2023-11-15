@@ -10,6 +10,7 @@
 #include <QDrag>
 #include <QSet>
 #include <QVector>
+#include "Bullet.h"
 
 class Defense : public QPushButton
 {
@@ -18,7 +19,7 @@ class Defense : public QPushButton
 public:
 	Defense();
     ~Defense();
-    Defense(QWidget* pass1,QString path,QPoint q,int num);
+    Defense(QWidget* pass1,QString path,QPoint q,int num,int id);
 	Defense(QString path,QWidget* parent = nullptr);
     void setMargin(int left, int top, int right, int bottom);
 	void setPosition(QPair<double,double> p);
@@ -27,6 +28,14 @@ public:
 	void makeDefenses(int num);
 	bool isShowed();
 
+
+	void attackAnimation(double x,double y);
+	void attackAnimation(Enemy*);
+	void changeTower(QString );
+	void changeTower(QPixmap& );
+	
+
+	void opebFire(double x, double y);
 
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
@@ -39,11 +48,28 @@ public:
     QTimer* timer = nullptr;
 	int positionId = 0;
 	QVector<Defense*> towers;
-	QPoint initPos;
+	QPoint initPos;  //记录初始位置
 	QVector<QPair<int, int>>positon; //可以放置的位置坐标
 	bool isShowing;// 现在是否是显形状态
 
+
+
 	double attackRadius;
+
+	int defenseId;
+	int shapeId;
+	QVector<QPixmap>shapes;
+
+
+	Bullet* bullet = nullptr;
+
+
+	QVector<Bullet*> bullets;//弹药库
+	int bulletId = 0;
+
+
+
+
 
 
 private:
@@ -65,7 +91,9 @@ private:
 	bool isShow = false; //判断是否显形过
 	bool isCheckAc = false;
 	Defense* des = nullptr;
-	static QVector<bool> canMove;
+	static QVector<bool> canMove; //防止多个防御塔放到同一个位置
+
+	bool attackEnd = true;
 	
 
 private slots:
@@ -75,7 +103,6 @@ signals:
 	void clicked();
 	void doubleClicked();
 	void toggled(bool isToggled);
-	void defenseId(int id);
 public slots:
 	void sendDefenseID(int id);
 };

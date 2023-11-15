@@ -14,7 +14,7 @@ public:
 	void changShape(QString path);
 
 public:
-	int blood = 0;		
+	int blood = 5;		
 	int speed = 0;
 	int id = 0;
 	QString enemyPath = "";

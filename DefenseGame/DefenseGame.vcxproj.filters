@@ -55,6 +55,9 @@
     <ClCompile Include="DefenseTower.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Pass1.h">
@@ -67,6 +70,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="DefenseTower.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="Bullet.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

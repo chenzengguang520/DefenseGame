@@ -12,9 +12,16 @@ Defense::Defense()
 Defense::~Defense()
 {}
 
-Defense::Defense(QWidget* _pass1,QString path, QPoint q,int num)
+Defense::Defense(QWidget* _pass1,QString path, QPoint q,int num,int id)
 {
+
+	//this->bullet->move(initPos.x() + this->width() / 2 + 50, initPos.y() + 100)
+
+
+
 	this->path = path;
+
+    this->defenseId = id;
 
     canMove.resize(num + 5);
 
@@ -185,12 +192,10 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
             isShow = false;
         }
         int ret = check(event);
-        if (ret != -1)
+        if (ret != -1 && !canMove[ret + 1])
         {
             canMove[ret + 1] = 1;
             this->towers[ret]->show();
-            qDebug()<<"**********************";
-            qDebug() << this;
             this->isShowing = true;
         }
         this->move(initPos.x(),initPos.y());
@@ -229,7 +234,6 @@ int Defense::check(QEvent* event)
     {
         double curx = cur.first;
         double cury = cur.second;
-       // qDebug() << "curx = " << curx << " cury = " << cury;
         if (x > curx - 10 && x < curx + 10 && y > cury - 10 && y < cury + 10)
         {
             isCheckAc = true;
@@ -246,7 +250,44 @@ void Defense::makeDefenses(int num)
 {
     for (int i = 0; i < num; i++)
     {
-        Defense* defense = new Defense(path, pass1);
+        QString towerPath = QString("./images/Fortress/%1_1.BMP").arg(this->defenseId);
+        Defense* defense = new Defense(towerPath, pass1);
+
+
+
+        shapeId = 1;
+
+        //弹药
+        for (int i = 0; i < 100; i++)
+        {
+            QString firePath = QString("./images/bullet%1.bmp").arg(this->defenseId);
+            Bullet* bul = new Bullet(firePath,this);
+            defense->bullets.push_back(bul);
+        }
+
+        //暂时用不到是想提前缓存动画省内存的发现好像没用.
+        for (int i = 1; i <= 18; i++)
+        {
+            QString Tp = QString("./images/Fortress/%1_%2.BMP").arg(this->defenseId).arg(shapeId++);
+			QPixmap originalPixmap;
+			bool ret = originalPixmap.load(Tp);
+			if (!ret)
+				qDebug() << "failed";
+
+			// 定义背景颜色的RGB值，例如绿色
+			int red = 34;
+			int green = 177;
+			int blue = 76;
+
+			// 创建一个副本，将背景颜色转换为透明
+			QPixmap modifiedPixmap = originalPixmap;
+			modifiedPixmap.setMask(originalPixmap.createMaskFromColor(QColor(red, green, blue)));
+
+            defense->shapes.push_back(modifiedPixmap);
+        }
+
+
+        defense->defenseId = defenseId;
         defense->isShowing = false;
         defense->attackRadius = 200;
         towers.push_back(defense);
@@ -256,6 +297,130 @@ void Defense::makeDefenses(int num)
 bool Defense::isShowed()
 {
     return this->isShowing;
+}
+
+void Defense::attackAnimation(double x, double y)
+{
+    if (!attackEnd)
+        return;
+    attackEnd = false;
+    QTimer* timer = new QTimer();
+    timer->start(50);
+    
+    shapeId = 1;
+    connect(timer, &QTimer::timeout, [=]() {
+
+		if (shapeId > 18)
+		{
+            qDebug() << "size = " << this->bullets.size();
+			this->bullet = bullets[bulletId++];
+            
+			this->bullet->move(initPos.x() + this->width() / 2 , initPos.y());
+			//qDebug() << "bullet:" << bullet->pos();
+			this->bullet->initX = initPos.x() + this->width() / 2;
+			this->bullet->initY = initPos.y();
+			this->bullet->show();
+            this->bullet->raise();
+			this->bullet->attack(x, y);
+            shapeId = 1;
+            attackEnd = true;
+            timer->stop();
+		}
+
+        QString towerPath = QString("./images/Fortress/%1_%2.BMP").arg(this->defenseId).arg(shapeId++);
+   //     qDebug() << "towerPath = " << towerPath;
+    //    qDebug() << shapes.size();
+        changeTower(towerPath);
+      //  changeTower(this->shapes[shapeId - 1]);
+
+    });
+
+}
+
+void Defense::attackAnimation(Enemy* enemy)
+{
+
+    if (!attackEnd)
+        return;
+    attackEnd = false;
+    QTimer* timer = new QTimer();
+    timer->start(50);
+
+    shapeId = 1;
+    connect(timer, &QTimer::timeout, [=]() {
+
+        if (shapeId > 18)
+        {
+            qDebug() << "size = " << this->bullets.size();
+            this->bullet = bullets[bulletId++];
+
+            this->bullet->move(initPos.x() + this->width() / 2, initPos.y());
+            //qDebug() << "bullet:" << bullet->pos();
+            this->bullet->initX = initPos.x() + this->width() / 2;
+            this->bullet->initY = initPos.y();
+            this->bullet->show();
+            this->bullet->raise();
+            this->bullet->attack(enemy);
+            shapeId = 1;
+            attackEnd = true;
+            timer->stop();
+        }
+
+        QString towerPath = QString("./images/Fortress/%1_%2.BMP").arg(this->defenseId).arg(shapeId++);
+        //     qDebug() << "towerPath = " << towerPath;
+         //    qDebug() << shapes.size();
+        changeTower(towerPath);
+        //  changeTower(this->shapes[shapeId - 1]);
+
+    });
+
+
+}
+
+void Defense::changeTower(QString towerPath)
+{
+
+	QPixmap originalPixmap;
+	bool ret = originalPixmap.load(towerPath);
+	if (!ret)
+		qDebug() << "failed";
+
+	// 定义背景颜色的RGB值，例如绿色
+	int red = 34;
+	int green = 177;
+	int blue = 76;
+
+	// 创建一个副本，将背景颜色转换为透明
+	QPixmap modifiedPixmap = originalPixmap;
+	modifiedPixmap.setMask(originalPixmap.createMaskFromColor(QColor(red, green, blue)));
+
+	this->setFixedSize(modifiedPixmap.size());
+	// 设置按钮样式
+	this->setStyleSheet("QPushButton{border:0px}");
+
+	// 设置按钮图标
+	this->setIcon(QIcon(modifiedPixmap));
+	// 设置图标大小
+	this->setIconSize(modifiedPixmap.size());
+
+}
+void Defense::changeTower(QPixmap& modifiedPixmap)
+{
+
+	this->setFixedSize(modifiedPixmap.size());
+	// 设置按钮样式
+	this->setStyleSheet("QPushButton{border:0px}");
+
+	// 设置按钮图标
+	this->setIcon(QIcon(modifiedPixmap));
+	// 设置图标大小
+	this->setIconSize(modifiedPixmap.size());
+
+}
+
+void Defense::opebFire(double x, double y)
+{
+
 }
 
 void Defense::sendDefenseID(int Id)

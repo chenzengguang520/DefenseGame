@@ -6,8 +6,10 @@ Pass1::Pass1(QWidget *parent)
 {
 	ui.setupUi(this);
 
+
 	enemyNum = 10;
 	num = 2;
+	isAttack.resize(num * 2 + 2);
 	this->distances.resize(num * 2);
 	for (int i = 0; i < num * 2; i++)
 	{
@@ -28,8 +30,8 @@ Pass1::Pass1(QWidget *parent)
 	qDebug() << "this->x = " << this->width() << " this->y = " << this->height();
 
 
-	QPoint p1(this->width() / 2 - 20, this->height() / 2 - 20);
-	QPoint p2(this->width() * 0.8, this->height() * 0.8);
+	QPoint p1(266,117);
+	QPoint p2(414,272);
 
 	acPos.push_back(p1);
 	acPos.push_back(p2);
@@ -38,7 +40,6 @@ Pass1::Pass1(QWidget *parent)
 	{
 		DefenseTower* ac = new DefenseTower(this);
 		ac->move(cur);
-		qDebug() << " xx = " << this->width() * 1.0 / 2 << " yy = " << this->height() * 1.0 / 2;
 		ac->show();
 	}
 
@@ -47,23 +48,23 @@ Pass1::Pass1(QWidget *parent)
 
 
 	//啥作用暂时忘了，不敢删
-// 	Defense* defense11 = new Defense("./images/Fortress/small1.BMP", this);
-// 	defense11->setParent(this);
-// 	defense11->show();
-// 
-// 	Defense* defense12 = new Defense("./images/Fortress/small2.BMP", this);
-// 	defense12->setParent(this);
-// 	defense12->move(defense11->size().width() + 5, 0);
-// 	defense12->show();
+	Defense* defense11 = new Defense("./images/Fortress/small1.BMP", this);
+	defense11->setParent(this);
+	defense11->show();
+
+	Defense* defense12 = new Defense("./images/Fortress/small2.BMP", this);
+	defense12->setParent(this);
+	defense12->move(defense11->size().width() + 5, 0);
+	defense12->show();
 
 
 	//左上角的两个防御塔
-	Defense* defense1 = new Defense(this,"./images/Fortress/small1.BMP",q,num);
+	Defense* defense1 = new Defense(this,"./images/Fortress/small1.BMP",q,num,1);
 
 	defense1->setParent(this);
 	defense1->show();
 	
-	Defense* defense2 = new Defense(this, "./images/Fortress/small2.BMP", q, num);
+	Defense* defense2 = new Defense(this, "./images/Fortress/small2.BMP", q, num,2);
 	defense2->setParent(this);
 	defense2->move(defense1->size().width() + 5,0);
 	defense2->initPos = defense2->pos();
@@ -80,19 +81,46 @@ Pass1::Pass1(QWidget *parent)
 		QPair<int, int>position(posx,posy);
 		defense1->setPosition(position);
 		defense2->setPosition(position);
-		defense1->towers[count]->move(posx, posy);
+		int towerWidth = defense1->towers[count]->width();
+		int towerHeight = defense1->towers[count]->height();
+		defense1->towers[count]->move(posx - towerWidth / 2, posy - towerHeight / 2);
+		defense1->towers[count]->initPos = QPoint(posx - towerWidth / 2, posy - towerHeight / 2);
 		defense1->towers[count]->setParent(this);
+		//defense1->towers[count]->bullet->setParent(this);
 		defense1->towers[count]->hide();
-		defense2->towers[count]->move(posx, posy);
+		//defense1->towers[count]->bullet->hide();
+		defense2->towers[count]->move(posx - towerWidth / 2, posy - towerWidth / 2);
+		defense2->towers[count]->initPos = QPoint(posx - towerWidth / 2, posy - towerHeight / 2);
 		defense2->towers[count]->setParent(this);
+		//defense2->towers[count]->bullet->setParent(this);
+		//defense2->towers[count]->bullet->hide();
 		defense2->towers[count++]->hide();
 
+	}
+
+	//设置弹药的爹
+	for (auto& tower : defense1->towers)
+	{
+		for (auto& bullet : tower->bullets)
+		{
+			bullet->setParent(this);
+			bullet->hide();
+		}
+	}
+
+	for (auto& tower : defense2->towers)
+	{
+		for (auto& bullet : tower->bullets)
+		{
+			bullet->setParent(this);
+			bullet->hide();
+		}
 	}
 
 	//存储防御塔
 	for (auto& defense : defense1->towers)
 	{
-		//qDebug() << "&defense = " << &defense;
+
 		this->defenses.push_back(defense);
 	}
 
@@ -257,12 +285,12 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 	QTimer* timer = new QTimer;
 
 	timer->start(50);
+	enemy->setParent(this);
+	enemy->show();
 
 	connect(timer, &QTimer::timeout, [=]() {
 
 
-		enemy->setParent(this);
-		enemy->show();
 		enemy->move(450.0 + enemy->width() / 2, 0 + enemy->height() / 2);
 	
 		if (!enemy->isChange)
@@ -282,7 +310,14 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 			//qDebug()<<"dis = "<< distances[i][index] << "attackRadius" << defenses[i]->attackRadius;
 			if (distances[i][index] <= defenses[i]->attackRadius)
 			{
-				qDebug() << "i = " <<i<< " index = " << index << " dis = " << distances[i][index];
+			//	qDebug() << "i = " <<i<< " index = " << index << " dis = " << distances[i][index];
+
+				this->defenses[i]->attackAnimation(enemy);
+				if (!enemy->blood)
+				{
+					enemy->hide();
+					timer->stop();
+				}
 			}
 		}
 

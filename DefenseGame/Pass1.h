@@ -69,6 +69,10 @@ private:
 
 	const int MAX_NUM = 0X7fffffff;
 
+	QVector<bool> isAttack;//第i个炮塔正在攻击
+
+	QMap<int, int>attackObject; // 第几号防御塔攻击第几号对线
+
 };
 
 
