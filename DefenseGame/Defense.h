@@ -37,6 +37,8 @@ public:
 
 	void opebFire(double x, double y);
 
+	bool enemyCheck(Enemy*);//可以继续攻击这个怪返回true
+
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
 

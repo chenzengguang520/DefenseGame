@@ -182,9 +182,6 @@ Pass1::Pass1(QWidget *parent)
 		enemyMove(enemys[i],i);
 	}
 
-
-
-
 }
 
 Pass1::~Pass1()
@@ -312,7 +309,7 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 
 				/*怪物倒地之后还会多攻击一次因为上一次攻击还没结束，怪物还没死亡*/
 				this->defenses[i]->attackAnimation(enemy);
-				if (enemy->blood == 0)
+				if (enemy->blood <= 0)
 				{
 					enemy->hide();
 					timer->stop();

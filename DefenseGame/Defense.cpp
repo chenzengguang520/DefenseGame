@@ -366,8 +366,12 @@ void Defense::attackAnimation(Enemy* enemy)
            // qDebug() << "enemy->id = " << enemy->id;
             this->bullet->attack(enemy);
             shapeId = 1;
-            attackEnd = true;
-            timer->stop();
+
+            if (!enemyCheck(enemy))
+            {
+                attackEnd = true;
+                timer->stop();
+            }
         }
 
         QString towerPath = QString("./images/Fortress/%1_%2.BMP").arg(this->defenseId).arg(shapeId++);
@@ -425,6 +429,17 @@ void Defense::changeTower(QPixmap& modifiedPixmap)
 void Defense::opebFire(double x, double y)
 {
 
+}
+
+//可以继续攻击这个怪返回true
+bool Defense::enemyCheck(Enemy* enemy)
+{
+    double x = enemy->initx;
+    double y = enemy->inity;
+    double dist = sqrt((this->pos().x() - x) * (this->pos().x() - x) + (this->pos().y() - y) * (this->pos().y() - y));
+    if (dist > attackRadius || enemy->blood <= 0)
+        return false;
+    return true;
 }
 
 void Defense::sendDefenseID(int Id)
