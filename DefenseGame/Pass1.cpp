@@ -177,7 +177,6 @@ Pass1::Pass1(QWidget *parent)
 		enemys.push_back(enemy);
 	}
 	
-
 	for (int i = 0; i < enemyNum; i++)
 	{
 		enemyMove(enemys[i],i);
@@ -310,13 +309,14 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 			//qDebug()<<"dis = "<< distances[i][index] << "attackRadius" << defenses[i]->attackRadius;
 			if (distances[i][index] <= defenses[i]->attackRadius)
 			{
-			//	qDebug() << "i = " <<i<< " index = " << index << " dis = " << distances[i][index];
 
+				/*怪物倒地之后还会多攻击一次因为上一次攻击还没结束，怪物还没死亡*/
 				this->defenses[i]->attackAnimation(enemy);
-				if (!enemy->blood)
+				if (enemy->blood == 0)
 				{
 					enemy->hide();
 					timer->stop();
+					return;
 				}
 			}
 		}

@@ -339,10 +339,13 @@ void Defense::attackAnimation(double x, double y)
 
 void Defense::attackAnimation(Enemy* enemy)
 {
-
+    if (!enemy->blood)
+        return;
+ //   qDebug() << "enemy->blood" << enemy->blood;
     if (!attackEnd)
         return;
     attackEnd = false;
+ //   qDebug() << "enemy id = " << enemy->id;
     QTimer* timer = new QTimer();
     timer->start(50);
 
@@ -351,7 +354,7 @@ void Defense::attackAnimation(Enemy* enemy)
 
         if (shapeId > 18)
         {
-            qDebug() << "size = " << this->bullets.size();
+            //qDebug() << "size = " << this->bullets.size();
             this->bullet = bullets[bulletId++];
 
             this->bullet->move(initPos.x() + this->width() / 2, initPos.y());
@@ -360,6 +363,7 @@ void Defense::attackAnimation(Enemy* enemy)
             this->bullet->initY = initPos.y();
             this->bullet->show();
             this->bullet->raise();
+           // qDebug() << "enemy->id = " << enemy->id;
             this->bullet->attack(enemy);
             shapeId = 1;
             attackEnd = true;

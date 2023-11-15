@@ -67,7 +67,7 @@ public:
 	QVector<Bullet*> bullets;//弹药库
 	int bulletId = 0;
 
-
+	bool attackEnd = true;
 
 
 
@@ -93,7 +93,7 @@ private:
 	Defense* des = nullptr;
 	static QVector<bool> canMove; //防止多个防御塔放到同一个位置
 
-	bool attackEnd = true;
+	
 	
 
 private slots:

@@ -106,7 +106,7 @@ void Bullet::attack(Enemy* enemy)
 	connect(timer, &QTimer::timeout, [=]() {
 
 		//qDebug() << "timer is running";
-		this->move(initX, initY);
+		this->move(initX + enemy->width() / 2 + enemy->dx, initY + enemy->dy);
 		initX += dx;
 		initY += dy;
 		if (initX - x >= -2 && initX - x <= 2 && initY - y >= -2 && initY - y <= 2)
