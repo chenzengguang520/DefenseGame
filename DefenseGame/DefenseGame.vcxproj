@@ -94,6 +94,8 @@
     <ClCompile Include="DefenseTower.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Pass1.cpp" />
+    <ClCompile Include="ReadFile.cpp" />
+    <ClCompile Include="SettlementScreen.cpp" />
     <QtRcc Include="DefenseGame.qrc" />
     <QtRcc Include="image.qrc" />
     <QtUic Include="DefenseGame.ui" />
@@ -101,6 +103,7 @@
     <ClCompile Include="DefenseGame.cpp" />
     <ClCompile Include="main.cpp" />
     <QtUic Include="Pass1.ui" />
+    <QtUic Include="SettlementScreen.ui" />
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Pass1.h" />
@@ -116,6 +119,12 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Bullet.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="ReadFile.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="SettlementScreen.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

@@ -58,6 +58,12 @@
     <ClCompile Include="Bullet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ReadFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SettlementScreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Pass1.h">
@@ -75,9 +81,18 @@
     <QtMoc Include="Bullet.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="ReadFile.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="SettlementScreen.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Pass1.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="SettlementScreen.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>

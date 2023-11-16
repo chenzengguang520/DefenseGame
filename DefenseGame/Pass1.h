@@ -12,6 +12,8 @@
 #include "Enemy.h"
 #include <QTimer>
 #include <cmath>
+#include "ReadFile.h"
+#include "SettlementScreen.h"
 
 class Pass1 : public QMainWindow
 {
@@ -72,6 +74,9 @@ private:
 	QVector<bool> isAttack;//第i个炮塔正在攻击
 
 	QMap<int, int>attackObject; // 第几号防御塔攻击第几号对线
+
+
+	bool isEnd = false;
 
 };
 

@@ -7,8 +7,28 @@ Pass1::Pass1(QWidget *parent)
 	ui.setupUi(this);
 
 
-	enemyNum = 10;
-	num = 2;
+	ReadFile* readFile = new ReadFile();
+	readFile->ReadPassInformation("./file/Game Level/pass1.txt");
+	enemyNum = readFile->enemyNum;
+	num = readFile->num;
+
+
+	QPoint p1(266, 117);
+	QPoint p2(414, 272);
+
+
+	for (const auto& point : readFile->points)
+	{
+		acPos.push_back(*point);
+	}
+	this->setFixedSize(1024, 568);
+
+
+	for (const auto& point : readFile->pathPosition)
+	{
+		enemyPos.push_back(*point);
+	}
+
 	isAttack.resize(num * 2 + 2);
 	this->distances.resize(num * 2);
 	for (int i = 0; i < num * 2; i++)
@@ -30,11 +50,6 @@ Pass1::Pass1(QWidget *parent)
 	qDebug() << "this->x = " << this->width() << " this->y = " << this->height();
 
 
-	QPoint p1(266,117);
-	QPoint p2(414,272);
-
-	acPos.push_back(p1);
-	acPos.push_back(p2);
 
 	for (const auto& cur : acPos)
 	{
@@ -43,8 +58,6 @@ Pass1::Pass1(QWidget *parent)
 		ac->show();
 	}
 
-	this->resize(1024, 568);
-	QPoint q(0, 0);
 
 
 	//啥作用暂时忘了，不敢删
@@ -59,6 +72,7 @@ Pass1::Pass1(QWidget *parent)
 
 
 	//左上角的两个防御塔
+	QPoint q(0, 0);
 	Defense* defense1 = new Defense(this,"./images/Fortress/small1.BMP",q,num,1);
 
 	defense1->setParent(this);
@@ -132,20 +146,6 @@ Pass1::Pass1(QWidget *parent)
 	//gogogo
 	//Enemy* enemy = new Enemy("./images/monster1/down_1.BMP");
 
-	enemyPos.push_back(QPoint(450.0, 0));
-	enemyPos.push_back(QPoint(450.0, 105.0));
-	enemyPos.push_back(QPoint(420.0, 175.0));
-	enemyPos.push_back(QPoint(260.0, 230.0));
-	enemyPos.push_back(QPoint(240.0, 230.0));
-	enemyPos.push_back(QPoint(240.0, 300.0));
-	enemyPos.push_back(QPoint(280.0, 350.0));
-	enemyPos.push_back(QPoint(300.0, 370.0));
-	enemyPos.push_back(QPoint(400.0, 370.0));
-	enemyPos.push_back(QPoint(500.0, 370.0));	
-	enemyPos.push_back(QPoint(600.0, 370.0));
-	enemyPos.push_back(QPoint(720.0, 370.0));
-	enemyPos.push_back(QPoint(800.0, 300.0));
-	enemyPos.push_back(QPoint(this->width(), 300));
 
 	for (int i = 0; i < enemyNum; i++)
 	{
@@ -286,6 +286,8 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 
 	connect(timer, &QTimer::timeout, [=]() {
 
+		if (isEnd)
+			return;
 
 		enemy->move(450.0 + enemy->width() / 2, 0 + enemy->height() / 2);
 	
@@ -323,9 +325,17 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 		{
 			enemy->initx = enemy->destinationX;
 			enemy->inity = enemy->destinationY;
-
 			if (enemy->initx == this->width())
+			{
+
+				SettlementScreen* screen = new SettlementScreen();
+				screen->setParent(this);
+				screen->show();
+				screen->move(0, 0);
+				isEnd = true;
 				timer->stop();
+				return;
+			}
 
 			if (enemy->inity == 350.0)
 			{
