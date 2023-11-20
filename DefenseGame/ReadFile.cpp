@@ -26,10 +26,16 @@ void ReadFile::ReadPassInformation(QString path)
 	QTextStream in(&file);
 
 	// 读取文件内容并输出到控制台
-	passInformationId = 1;
+	passInformationId = 0;
 	while (!in.atEnd())
 	{
 		QString line = in.readLine();
+
+		if (passInformationId == 0)
+		{
+			mapPath = line;
+		}
+
 		if(passInformationId == 1)
 		{
 			enemyNum = line.toInt();

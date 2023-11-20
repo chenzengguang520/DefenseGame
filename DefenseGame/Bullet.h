@@ -23,6 +23,9 @@ public:
 	double initY = 0;
 	bool endAttack = false;
 	int damage = 1;
+	bool attackEnd = true;
+	double destinationX;
+	double destinationY;
 
 public:
 	QString path = "";

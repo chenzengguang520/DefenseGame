@@ -15,8 +15,6 @@ Defense::~Defense()
 Defense::Defense(QWidget* _pass1,QString path, QPoint q,int num,int id)
 {
 
-	//this->bullet->move(initPos.x() + this->width() / 2 + 50, initPos.y() + 100)
-
 
 
 	this->path = path;
@@ -60,10 +58,15 @@ Defense::Defense(QWidget* _pass1,QString path, QPoint q,int num,int id)
 	this->setFixedSize(modifiedPixmap.size());
 	// 设置按钮样式
 	this->setStyleSheet("QPushButton{border:0px}");
+
+
+
 	// 设置按钮图标
 	this->setIcon(QIcon(modifiedPixmap));
 	// 设置图标大小
 	this->setIconSize(modifiedPixmap.size());
+
+    
 
 }
 
@@ -196,7 +199,7 @@ bool Defense::eventFilter(QObject* watched, QEvent* event)
         {
             canMove[ret + 1] = 1;
             this->towers[ret]->show();
-            this->isShowing = true;
+            this->towers[ret]->isShowing = true;
         }
         this->move(initPos.x(),initPos.y());
         break;
@@ -232,8 +235,8 @@ int Defense::check(QEvent* event)
     int count = 0;
     for (const auto& cur : positon)
     {
-        double curx = cur.first;
-        double cury = cur.second;
+        double curx = cur.first - this->width() / 2;
+        double cury = cur.second - this->height() / 2;
         if (x > curx - 10 && x < curx + 10 && y > cury - 10 && y < cury + 10)
         {
             isCheckAc = true;
@@ -250,7 +253,8 @@ void Defense::makeDefenses(int num)
 {
     for (int i = 0; i < num; i++)
     {
-        QString towerPath = QString("./images/Fortress/%1_1.BMP").arg(this->defenseId);
+        QString towerPath = QString("./images/tower/tower%1/tower%2_0").arg(this->defenseId).arg(this->defenseId);
+        qDebug() << "towerPath = " << towerPath;
         Defense* defense = new Defense(towerPath, pass1);
 
 
@@ -258,32 +262,12 @@ void Defense::makeDefenses(int num)
         shapeId = 1;
 
         //弹药
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 200; i++)
         {
-            QString firePath = QString("./images/bullet%1.bmp").arg(this->defenseId);
+            QString firePath = QString("./images/bullet/bullet1.png").arg(this->defenseId);
+           
             Bullet* bul = new Bullet(firePath,this);
             defense->bullets.push_back(bul);
-        }
-
-        //暂时用不到是想提前缓存动画省内存的发现好像没用.
-        for (int i = 1; i <= 18; i++)
-        {
-            QString Tp = QString("./images/Fortress/%1_%2.BMP").arg(this->defenseId).arg(shapeId++);
-			QPixmap originalPixmap;
-			bool ret = originalPixmap.load(Tp);
-			if (!ret)
-				qDebug() << "failed";
-
-			// 定义背景颜色的RGB值，例如绿色
-			int red = 34;
-			int green = 177;
-			int blue = 76;
-
-			// 创建一个副本，将背景颜色转换为透明
-			QPixmap modifiedPixmap = originalPixmap;
-			modifiedPixmap.setMask(originalPixmap.createMaskFromColor(QColor(red, green, blue)));
-
-            defense->shapes.push_back(modifiedPixmap);
         }
 
 
@@ -299,86 +283,92 @@ bool Defense::isShowed()
     return this->isShowing;
 }
 
-void Defense::attackAnimation(double x, double y)
-{
-    if (!attackEnd)
-        return;
-    attackEnd = false;
-    QTimer* timer = new QTimer();
-    timer->start(50);
-    
-    shapeId = 1;
-    connect(timer, &QTimer::timeout, [=]() {
-
-		if (shapeId > 18)
-		{
-            qDebug() << "size = " << this->bullets.size();
-			this->bullet = bullets[bulletId++];
-            
-			this->bullet->move(initPos.x() + this->width() / 2 , initPos.y());
-			//qDebug() << "bullet:" << bullet->pos();
-			this->bullet->initX = initPos.x() + this->width() / 2;
-			this->bullet->initY = initPos.y();
-			this->bullet->show();
-            this->bullet->raise();
-			this->bullet->attack(x, y);
-            shapeId = 1;
-            attackEnd = true;
-            timer->stop();
-		}
-
-        QString towerPath = QString("./images/Fortress/%1_%2.BMP").arg(this->defenseId).arg(shapeId++);
-   //     qDebug() << "towerPath = " << towerPath;
-    //    qDebug() << shapes.size();
-        changeTower(towerPath);
-      //  changeTower(this->shapes[shapeId - 1]);
-
-    });
-
-}
-
 void Defense::attackAnimation(Enemy* enemy)
 {
-    if (!enemy->blood)
+    if (!this->isShowing)
         return;
- //   qDebug() << "enemy->blood" << enemy->blood;
+    if (!enemy->blood)
+
+        return;
     if (!attackEnd)
         return;
     attackEnd = false;
- //   qDebug() << "enemy id = " << enemy->id;
     QTimer* timer = new QTimer();
-    timer->start(50);
+    timer->start(10);
 
     shapeId = 1;
+    
+    x0 = this->pos().x() + 0.5 * this->width();
+    y0 = this->pos().y() + 0.5 * this->height();
+    
+
+
     connect(timer, &QTimer::timeout, [=]() {
-
-        if (shapeId > 18)
+        
+        if (canTransform)
         {
-            //qDebug() << "size = " << this->bullets.size();
-            this->bullet = bullets[bulletId++];
+            x1 = enemy->pos().x() + 0.5 * enemy->width();
+            y1 = enemy->pos().y() + 0.5 * enemy->height();
 
-            this->bullet->move(initPos.x() + this->width() / 2, initPos.y());
-            //qDebug() << "bullet:" << bullet->pos();
-            this->bullet->initX = initPos.x() + this->width() / 2;
-            this->bullet->initY = initPos.y();
-            this->bullet->show();
-            this->bullet->raise();
-           // qDebug() << "enemy->id = " << enemy->id;
-            this->bullet->attack(enemy);
-            shapeId = 1;
+            angleC = getAngle(x0, y0, x1, y1, x0, this->pos().y());
+
+            angleC = x1 < x0 ? -1 * angleC : angleC;
+
+            angleB = angleC - angleA;
+
+            dAngle = angleB < 0 ? -1 : 1;
+
+            canTransform = false;
+
+        }
+		angleB = angleC - angleA;
+
+		dAngle = angleB < 0 ? -1 : 1;
+        auto abs = [=](int num) -> int {
+            return num < 0 ? -1 * num : num;
+        };
+
+
+
+        bool ret = angleA == angleC;
+        if (ret)
+        {
+            double angleA_ = (angleA / 180.0) * PI;
+            x2 = x0 + 0.5 * this->height() * sin(angleA_);
+            y2 = y0 - 0.5 * this->height() * cos(angleA_);
+		 
+            if (shapeId > 5)
+            {
+                qDebug() << " id = " << enemy->id;
+				this->bullet = bullets[bulletId++];
+                this->bullet->destinationX = x1;
+                this->bullet->destinationY = y1;
+				this->bullet->move(x2 - this->bullet->width() * 0.5, y2 - this->bullet->height() * 0.5);
+				this->bullet->initX = x2 - this->bullet->width() * 0.5;
+				this->bullet->initY = y2 - this->bullet->height() * 0.5;
+				this->bullet->show();
+				this->bullet->attackEnd = false;
+				this->bullet->attack(enemy);
+                shapeId = 1;
+            }
+
+            canTransform = true;
 
             if (!enemyCheck(enemy))
             {
-                attackEnd = true;
-                timer->stop();
+				attackEnd = true;
+				timer->stop();
             }
-        }
 
-        QString towerPath = QString("./images/Fortress/%1_%2.BMP").arg(this->defenseId).arg(shapeId++);
-        //     qDebug() << "towerPath = " << towerPath;
-         //    qDebug() << shapes.size();
-        changeTower(towerPath);
-        //  changeTower(this->shapes[shapeId - 1]);
+            
+        }
+        if (changeEnd && !canTransform)
+        {
+            shapeId++;
+			changeEnd = false;
+			changeTower(dAngle + angleA);
+			changeEnd = true;
+        }
 
     });
 
@@ -398,20 +388,65 @@ void Defense::changeTower(QString towerPath)
 	int green = 177;
 	int blue = 76;
 
+    // 创建一个副本，将背景颜色转换为透明
+    QPixmap modifiedPixmap = originalPixmap;
+    modifiedPixmap.setMask(originalPixmap.createMaskFromColor(QColor(red, green, blue)));
+
+    // 设置旋转角度
+    int rotationAngle = 0; // 替换为你需要的旋转角度
+    QTransform transform;
+    //transform.rotate(rotationAngle);
+    modifiedPixmap = modifiedPixmap.transformed(transform, Qt::SmoothTransformation);
+
+    // 设置按钮大小
+    this->setFixedSize(modifiedPixmap.size());
+
+    // 设置按钮样式
+    this->setStyleSheet("QPushButton{border:0px}");
+
+    // 设置按钮图标
+    this->setIcon(QIcon(modifiedPixmap));
+
+    // 设置图标大小
+    this->setIconSize(modifiedPixmap.size());
+   
+
+}
+
+
+void Defense::changeTower(int _angle)
+{
+	QPixmap originalPixmap;
+    path = QString("./images/tower/tower%1/tower%2_%3.png").arg(this->defenseId).arg(this->defenseId).arg(_angle);
+	bool ret = originalPixmap.load(this->path);
+	if (!ret)
+		qDebug() << "failed";
+
+	// 定义背景颜色的RGB值，例如绿色
+	int red = 34;
+	int green = 177;
+	int blue = 76;
+
 	// 创建一个副本，将背景颜色转换为透明
 	QPixmap modifiedPixmap = originalPixmap;
 	modifiedPixmap.setMask(originalPixmap.createMaskFromColor(QColor(red, green, blue)));
 
+
+	// 设置按钮大小
 	this->setFixedSize(modifiedPixmap.size());
+
 	// 设置按钮样式
 	this->setStyleSheet("QPushButton{border:0px}");
 
 	// 设置按钮图标
 	this->setIcon(QIcon(modifiedPixmap));
+
 	// 设置图标大小
 	this->setIconSize(modifiedPixmap.size());
-
+    angleA += dAngle;
 }
+
+
 void Defense::changeTower(QPixmap& modifiedPixmap)
 {
 
@@ -441,6 +476,28 @@ bool Defense::enemyCheck(Enemy* enemy)
         return false;
     return true;
 }
+
+void Defense::spin(double angle)
+{
+
+
+
+}
+
+double Defense::getAngle(double x0, double y0, double x1, double y1,double x2,double y2)
+{
+    double C = sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    double A = sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+    double B = sqrt((x2 - x0) * (x2 - x0) + (y2 - y0) * (y2 - y0));
+    double cosAngle = (A * A + B * B - C * C) * 1.0 / (2 * A * B);
+    double agl = acos(cosAngle);
+
+
+
+    return agl * 180 / PI;
+
+}
+
 
 void Defense::sendDefenseID(int Id)
 {

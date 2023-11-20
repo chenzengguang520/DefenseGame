@@ -83,17 +83,17 @@ void Bullet::attack(double x, double y)
 void Bullet::attack(Enemy* enemy)
 {
 
-	double x = enemy->initx;
-	double y = enemy->inity;
-	double DX = enemy->initx - initX;
-	double DY = enemy->inity - initY;
+	double x = destinationX;
+	double y = destinationY;
+	double DX = x - initX;
+	double DY = y - initY;
 
 	QPair<double, double>V = getV(DX, DY);
 
 
 	double dx = V.first;
 	double dy = V.second;
-	//qDebug() << "bullet dx = " << dx << " bullet dy = " << dy;
+
 
 	initX += dx;
 	initY += dy;
@@ -101,19 +101,21 @@ void Bullet::attack(Enemy* enemy)
 
 	QTimer* timer = new QTimer;
 
-	timer->start(1);
+	timer->start(2);
 
 	connect(timer, &QTimer::timeout, [=]() {
 
 		//qDebug() << "timer is running";
-		this->move(initX + enemy->width() / 2 + enemy->dx, initY + enemy->dy);
+		//this->move(initX + enemy->width() / 2 + enemy->dx, initY + enemy->dy);
+		this->move(initX , initY);
 		initX += dx;
 		initY += dy;
-		if (initX - x >= -2 && initX - x <= 2 && initY - y >= -2 && initY - y <= 2)
+		if (initX - x >= -3 && initX - x <= 3 && initY - y >= -3 && initY - y <= 3)
 		{
 			endAttack = true;
 			enemy->blood -= 1;
 			this->hide();
+			this->~Bullet();
 			timer->stop();
 		}
 

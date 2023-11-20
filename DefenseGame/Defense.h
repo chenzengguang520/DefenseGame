@@ -11,12 +11,14 @@
 #include <QSet>
 #include <QVector>
 #include "Bullet.h"
-
+#include <QPainter>
+#include <cmath>
 class Defense : public QPushButton
 {
     Q_OBJECT
 
 public:
+
 	Defense();
     ~Defense();
     Defense(QWidget* pass1,QString path,QPoint q,int num,int id);
@@ -33,14 +35,22 @@ public:
 	void attackAnimation(Enemy*);
 	void changeTower(QString );
 	void changeTower(QPixmap& );
+
+	void changeTower(int angle);
 	
 
 	void opebFire(double x, double y);
 
 	bool enemyCheck(Enemy*);//可以继续攻击这个怪返回true
 
+	void spin(double angle);
+
+	double getAngle(double x0, double y0, double x1, double y1,double x2,double y2);
+
+
 protected:
     bool eventFilter(QObject* watched, QEvent* event);
+
 
 public:
     QString path;
@@ -94,6 +104,23 @@ private:
 	bool isCheckAc = false;
 	Defense* des = nullptr;
 	static QVector<bool> canMove; //防止多个防御塔放到同一个位置
+	const double PI= M_PI;
+
+	bool changeEnd = true;
+	bool canTransform = true;
+
+	// 看不懂看笔记
+	double x0;
+	double y0;
+	double x1;
+	double y1;
+	double x2 = x0 - 0.5 * this->height() * sin(0);;
+	double y2 = x0 - 0.5 * this->height() * cos(0);;
+
+	int angleC;
+	int angleA = 0;
+	int angleB;
+	int dAngle;
 
 	
 	

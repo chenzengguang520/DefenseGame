@@ -14,6 +14,8 @@
 #include <cmath>
 #include "ReadFile.h"
 #include "SettlementScreen.h"
+#include <QGraphicsScene>
+#include <QGraphicsView>
 
 class Pass1 : public QMainWindow
 {
@@ -27,6 +29,7 @@ public:
 	void paintTower(int id,int x,int y);
 	void mousePressEvent(QMouseEvent* event);
 	void updateDistance();
+	void getInformation();
 public:
 	QVector<QPoint>acPos;
 	QVector<bool> canMove;
@@ -53,6 +56,8 @@ public :
 	double getDistance(double x1, double y1, double x2, double y2);
 
 private:
+
+	QString mapPath = "";
 	int defenseId = -1;
 	bool isMoved = false;
 	bool isPressed = false;
@@ -77,6 +82,8 @@ private:
 
 
 	bool isEnd = false;
+
+	Defense* defense1;
 
 };
 

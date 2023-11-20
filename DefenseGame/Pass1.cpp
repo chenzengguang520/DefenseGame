@@ -7,27 +7,7 @@ Pass1::Pass1(QWidget *parent)
 	ui.setupUi(this);
 
 
-	ReadFile* readFile = new ReadFile();
-	readFile->ReadPassInformation("./file/Game Level/pass1.txt");
-	enemyNum = readFile->enemyNum;
-	num = readFile->num;
-
-
-	QPoint p1(266, 117);
-	QPoint p2(414, 272);
-
-
-	for (const auto& point : readFile->points)
-	{
-		acPos.push_back(*point);
-	}
-	this->setFixedSize(1024, 568);
-
-
-	for (const auto& point : readFile->pathPosition)
-	{
-		enemyPos.push_back(*point);
-	}
+	getInformation();
 
 	isAttack.resize(num * 2 + 2);
 	this->distances.resize(num * 2);
@@ -47,25 +27,31 @@ Pass1::Pass1(QWidget *parent)
 
 	this->installEventFilter(this);
 
-	qDebug() << "this->x = " << this->width() << " this->y = " << this->height();
 
 
 
-	for (const auto& cur : acPos)
+	for (auto& cur : acPos)
 	{
 		DefenseTower* ac = new DefenseTower(this);
-		ac->move(cur);
+		double acx = cur.x();
+		double acy = cur.y();
+		//ac->move(acx, acy);
+		ac->move(acx - ac->width() / 2,acy - ac->height() / 2);
+// 		cur.setX(acx - ac->width() / 2);
+// 		cur.setY(acy - ac->height() / 2);
+		//ac->move(cur);
 		ac->show();
 	}
 
 
 
 	//啥作用暂时忘了，不敢删
-	Defense* defense11 = new Defense("./images/Fortress/small1.BMP", this);
+	Defense* defense11 = new Defense("./images/tower/tower1/tower1_0.png", this);
 	defense11->setParent(this);
 	defense11->show();
 
-	Defense* defense12 = new Defense("./images/Fortress/small2.BMP", this);
+
+	Defense* defense12 = new Defense("./images/tower/tower2/tower2_0.png", this);
 	defense12->setParent(this);
 	defense12->move(defense11->size().width() + 5, 0);
 	defense12->show();
@@ -73,12 +59,13 @@ Pass1::Pass1(QWidget *parent)
 
 	//左上角的两个防御塔
 	QPoint q(0, 0);
-	Defense* defense1 = new Defense(this,"./images/Fortress/small1.BMP",q,num,1);
+	defense1 = new Defense(this,"./images/tower/tower1/tower1_0.png",q,num,1);
 
 	defense1->setParent(this);
 	defense1->show();
+
 	
-	Defense* defense2 = new Defense(this, "./images/Fortress/small2.BMP", q, num,2);
+	Defense* defense2 = new Defense(this, "./images/tower/tower2/tower2_0.png", q, num,2);
 	defense2->setParent(this);
 	defense2->move(defense1->size().width() + 5,0);
 	defense2->initPos = defense2->pos();
@@ -91,7 +78,6 @@ Pass1::Pass1(QWidget *parent)
 	{
 		int posx = cur.x();
 		int posy = cur.y();
-		qDebug() << "count = " << count << " posx = " << posx << " posy = " << posy;
 		QPair<int, int>position(posx,posy);
 		defense1->setPosition(position);
 		defense2->setPosition(position);
@@ -100,14 +86,10 @@ Pass1::Pass1(QWidget *parent)
 		defense1->towers[count]->move(posx - towerWidth / 2, posy - towerHeight / 2);
 		defense1->towers[count]->initPos = QPoint(posx - towerWidth / 2, posy - towerHeight / 2);
 		defense1->towers[count]->setParent(this);
-		//defense1->towers[count]->bullet->setParent(this);
 		defense1->towers[count]->hide();
-		//defense1->towers[count]->bullet->hide();
 		defense2->towers[count]->move(posx - towerWidth / 2, posy - towerWidth / 2);
 		defense2->towers[count]->initPos = QPoint(posx - towerWidth / 2, posy - towerHeight / 2);
 		defense2->towers[count]->setParent(this);
-		//defense2->towers[count]->bullet->setParent(this);
-		//defense2->towers[count]->bullet->hide();
 		defense2->towers[count++]->hide();
 
 	}
@@ -167,11 +149,11 @@ Pass1::Pass1(QWidget *parent)
 			enemy->enemyMaxNum = 13;
 		}
 
-		enemy->initx = enemyPos[0].x();
-		enemy->inity = enemyPos[0].y() - 40 * i;
-		enemy->destinationX = enemyPos[1].x();
-		enemy->destinationY = enemyPos[1].y();
-		enemy->dy = 1;
+		enemy->initx = enemyPos[0].x() - enemy->width() / 2;
+		enemy->inity = enemyPos[0].y() + 40 * i - enemy->height() / 2;
+		enemy->destinationX = enemyPos[1].x() - enemy->width() / 2;
+		enemy->destinationY = enemyPos[1].y() - enemy->height() / 2;
+		enemy->dy = -1;
 		enemy->id = _id;
 		enemy->enemyPosId++;
 		enemys.push_back(enemy);
@@ -190,8 +172,9 @@ Pass1::~Pass1()
 
 void Pass1::paintEvent(QPaintEvent* event)
 {
+//	getInformation();
 	QPainter painter(this);
-	QPixmap pixmap("./images/maps/bg.bmp");
+	QPixmap pixmap(mapPath);
 	painter.drawPixmap(this->rect(), pixmap);
 }
 
@@ -237,6 +220,36 @@ void Pass1::updateDistance()
 			this->distances[i][j] = dis;
 		}
 	}
+
+}
+
+void Pass1::getInformation()
+{
+	ReadFile* readFile = new ReadFile();
+	readFile->ReadPassInformation("./file/Game Level/pass1.txt");
+	mapPath = readFile->mapPath;
+	qDebug() << "map path = " << mapPath;
+	enemyNum = readFile->enemyNum;
+	num = readFile->num;
+
+
+	QPoint p1(266, 117);
+	QPoint p2(414, 272);
+
+
+	for (const auto& point : readFile->points)
+	{
+		acPos.push_back(*point);
+	}
+	this->resize(1024, 568);
+
+
+	for (const auto& point : readFile->pathPosition)
+	{
+		enemyPos.push_back(*point);
+	}
+
+
 
 }
 
@@ -289,13 +302,18 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 		if (isEnd)
 			return;
 
-		enemy->move(450.0 + enemy->width() / 2, 0 + enemy->height() / 2);
+		//enemy->move(450.0 + enemy->width() / 2, 0 + enemy->height() / 2);
 	
 		if (!enemy->isChange)
 			enemy->enemyPath = QString(QString("./images/monster%1/down_%2.BMP").arg(enemy->id).arg(enemy->enemyMinNum++));
 		else
 			enemy->enemyPath = QString(QString("./images/monster%1/Right_%2.BMP").arg(enemy->id).arg(enemy->enemyMinNum++));
 		enemy->changShape(enemy->enemyPath);
+		double X = enemy->destinationX - enemy->initx;
+		double Y = enemy->destinationY - enemy->inity;
+		QPair<double, double> v = getGap(X, Y, 1.0);
+		enemy->dx = v.first;
+		enemy->dy = v.second; 
 		enemy->initx += enemy->dx;
 		enemy->inity += enemy->dy;
 		enemy->move(enemy->initx, enemy->inity);
@@ -356,11 +374,11 @@ void Pass1::enemyMove(Enemy* enemy,int index)
 				}
 
 			}
-			enemy->destinationX = enemyPos[++enemy->enemyPosId].x();
-			enemy->destinationY = enemyPos[enemy->enemyPosId].y();
-			double X = enemy->destinationX - enemy->initx;
-			double Y = enemy->destinationY - enemy->inity;
-			QPair<double, double> v = getGap(X, Y, 1.0);
+			enemy->destinationX = enemyPos[++enemy->enemyPosId].x() - enemy->width() / 2;
+			enemy->destinationY = enemyPos[enemy->enemyPosId].y() - enemy->height() / 2;
+			X = enemy->destinationX - enemy->initx;
+			Y = enemy->destinationY - enemy->inity;
+			v = getGap(X, Y, 1.0);
 			enemy->dx = v.first;
 			enemy->dy = v.second;
 		}

@@ -6,6 +6,9 @@ DefenseGame::DefenseGame(QWidget *parent)
 {
     ui.setupUi(this);
 
+
+
+
 	//游戏界面设置
 	this->setFixedSize(1024, 568);
 	QPushButton* beginBtn = new QPushButton(this);

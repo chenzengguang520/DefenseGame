@@ -6,7 +6,7 @@ DefenseTower::DefenseTower(QWidget* parent)
     //setFixedSize(50, 50);  // 设置防御塔的大小
 
     
-    bool ret = towerPixmap.load("./images/base/base1.png");
+    bool ret = towerPixmap.load("./images/mark/makeTower.png");
     if (!ret)
         qDebug() << "failed load img";
     scaledPixmap = towerPixmap.scaled(towerPixmap.size() * 0.5);

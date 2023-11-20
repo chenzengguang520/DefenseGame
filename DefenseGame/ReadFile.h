@@ -23,4 +23,5 @@ public:
 	QVector<QPoint*>points;
 	QVector<QPoint*>pathPosition;
 	int passInformationId = 0;
+	QString mapPath = "";
 };

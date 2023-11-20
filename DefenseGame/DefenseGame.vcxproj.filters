@@ -64,6 +64,9 @@
     <ClCompile Include="SettlementScreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Road.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="Pass1.h">
@@ -87,12 +90,18 @@
     <QtMoc Include="SettlementScreen.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="Road.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Pass1.ui">
       <Filter>Form Files</Filter>
     </QtUic>
     <QtUic Include="SettlementScreen.ui">
+      <Filter>Form Files</Filter>
+    </QtUic>
+    <QtUic Include="Road.ui">
       <Filter>Form Files</Filter>
     </QtUic>
   </ItemGroup>
