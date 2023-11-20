@@ -83,8 +83,8 @@ void Bullet::attack(double x, double y)
 void Bullet::attack(Enemy* enemy)
 {
 
-	double x = destinationX;
-	double y = destinationY;
+	double x = destinationX - this->width() * 0.5;
+	double y = destinationY - this->height() * 0.5;
 	double DX = x - initX;
 	double DY = y - initY;
 
